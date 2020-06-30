@@ -25,3 +25,21 @@ stages:
             csmFile: '$(Build.SourcesDirectory)/StorageAccount/azuredeploy.json'
             csmParametersFile: '$(Build.SourcesDirectory)/StorageAccount/azuredeploy.parameters.json'
             deploymentMode: 'Validation'
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: 'Install-Module Az.Resources -RequiredVersion 1.12.1-preview -AllowPrerelease -Force -Scope CurrentUser'
+        - task: AzurePowerShell@5
+          inputs:
+            azureSubscription: 'jndevopsdemo001connection'
+            ScriptType: 'InlineScript'
+            Inline: |
+              $Parameters = @{
+                ResourcegroupName     = "ARMDeploymentTest"
+                Templatefile          = ".\StorageAccount\azuredeploy.json"
+                TemplateParameterfile = ".\StorageAccount\azuredeploy.parameters.json"
+                Mode                  = 'Incremental'
+              }
+              $Result = Get-AzResourceGroupDeploymentWhatIfResult @Parameters
+              $Result
+            azurePowerShellVersion: 'LatestVersion'
