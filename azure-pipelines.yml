@@ -43,3 +43,12 @@ stages:
               $Result = Get-AzResourceGroupDeploymentWhatIfResult @Parameters
               $Result
             azurePowerShellVersion: 'LatestVersion'
+        - task: AzurePowerShell@5
+          displayName: "Check for deletion"
+          inputs:
+            azureSubscription: 'jndevopsdemo001connection'
+            ScriptType: 'FilePath'
+            ScriptPath: '$(Build.SourcesDirectory)/Tests/CheckForDeletion.ps1'
+            ScriptArguments: '-ResourceGroup ARMDeploymentTest'
+            FailOnStandardError: true
+            azurePowerShellVersion: 'LatestVersion'
